@@ -1,6 +1,10 @@
 package com.xunlei.framework.support.redis;
 
-import redis.clients.jedis.*;
+import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.params.ZParams;
+import redis.clients.jedis.resps.ScanResult;
+import redis.clients.jedis.resps.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -9,8 +13,6 @@ import java.util.Set;
 
 /**
  * 定义Redis操作接口， 接口方法取自REDIS命令的小部分
- *
- * @see 请参考 http://www.redisdoc.com/en/latest/
  */
 public interface RedisOperation {
 
@@ -483,7 +485,7 @@ public interface RedisOperation {
      *
      * @return
      */
-    Set<String> zrangeByIndex(String key, long start, long end);
+    List<String> zrangeByIndex(String key, long start, long end);
 
     /**
      * 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。有序集成员按 score 值递增(从小到大)次序排列。
@@ -491,23 +493,23 @@ public interface RedisOperation {
      *
      * @return
      */
-    Set<String> zrangeByScore(String key, double min, double max);
+    List<String> zrangeByScore(String key, double min, double max);
 
     /**
      * 返回成员与分值 有序集成员按 score 值递增(从小到大)次序排列。
      */
-    Set<Tuple> zrangeByScoreWithScore(String key, double min, double max);
+    List<Tuple> zrangeByScoreWithScore(String key, double min, double max);
 
     /**
      * 根据分值查询并分页 score递增
      */
-    Set<Tuple> zrangeByScoreWithScore(String key, double min, double max, int offset, int count);
+    List<Tuple> zrangeByScoreWithScore(String key, double min, double max, int offset, int count);
 
     /**
      * 除了成员按 score 值递减的次序排列这一点外， ZREVRANGE 命令的其他方面和 ZRANGE 命令一样。
      * {@link #zrangeByIndex(String, long, long)}
      */
-    Set<String> zrevrangeByIndex(String key, long start, long end);
+    List<String> zrevrangeByIndex(String key, long start, long end);
 
     /**
      * 除了成员按 score 值递减的次序排列这一点外， ZREVRANGEBYSCORE 命令的其他方面和 ZRANGEBYSCORE 命令一样。
@@ -518,18 +520,18 @@ public interface RedisOperation {
      * @param min
      * @return
      */
-    Set<String> zrevrangeByScore(String key, double max, double min);
+    List<String> zrevrangeByScore(String key, double max, double min);
 
     /**
      * 除了成员按 score 值递减的次序排列这一点外， ZREVRANGEBYSCORE 命令的其他方面和 ZRANGEBYSCORE 命令一样。
      * 返回成员信息
      */
-    Set<Tuple> zrevrangeByScoreWithScore(String key, double min, double max);
+    List<Tuple> zrevrangeByScoreWithScore(String key, double min, double max);
 
     /**
      * 根据分值查询并分页 score递减
      */
-    Set<Tuple> zrevrangeByScoreWithScore(String key, double max, double min, int offset, int count);
+    List<Tuple> zrevrangeByScoreWithScore(String key, double max, double min, int offset, int count);
 
     /**
      * 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。
@@ -537,24 +539,22 @@ public interface RedisOperation {
      * LIMIT 参数指定返回结果的数量及区间(就像SQL中的 SELECT LIMIT offset, count )，
      * 注意当 offset 很大时，定位 offset 的操作可能需要遍历整个有序集
      */
-    Set<String> zrangeByScore(String key, double min, double max, int offset,
-                              int count);
+    List<String> zrangeByScore(String key, double min, double max, int offset, int count);
 
     /**
      * {@link #zrangeByScore(String, double, double, int, int)}
      */
-    Set<String> zrevrangeByScore(String key, double max, double min,
-                                 int offset, int count);
+    List<String> zrevrangeByScore(String key, double max, double min, int offset, int count);
 
     /**
      * {@link #zrangeByIndex(String, long, long)
      */
-    Set<Tuple> zrangeWithScores(String key, long start, long end);
+    List<Tuple> zrangeWithScores(String key, long start, long end);
 
     /**
      * {@link #zrevrangeByIndex(String, long, long)}
      */
-    Set<Tuple> zrevrangeWithScores(String key, long start, long end);
+    List<Tuple> zrevrangeWithScores(String key, long start, long end);
 
     /**
      * 计算给定的一个或多个有序集的并集，其中给定 key 的数量必须以 numkeys 参数指定，并将该并集(结果集)储存到 destination
@@ -600,6 +600,11 @@ public interface RedisOperation {
      * hll操作去重校验
      */
     Long pfadd(String key, String... values);
+
+    /**
+     * hll数据统计
+     */
+    Long pfcount(String key);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // other command
@@ -650,13 +655,4 @@ public interface RedisOperation {
      * @return
      */
     Long publish(String channel, String message);
-
-    /**
-     * 返回第一个集合与其他集合之间的差异。
-     *
-     * @param keys 键
-     * @return {@link Set}<{@link String}>
-     */
-    Set<String> sdiff(String... keys);
-
 }

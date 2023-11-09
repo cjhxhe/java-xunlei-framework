@@ -3,6 +3,12 @@ package com.xunlei.framework.support.redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
+import redis.clients.jedis.commands.JedisCommands;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.params.SetParams;
+import redis.clients.jedis.params.ZParams;
+import redis.clients.jedis.resps.ScanResult;
+import redis.clients.jedis.resps.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +17,7 @@ import java.util.Set;
 /**
  * 抽象缓存操作类实现，实现了单机或分布式集群环境下共有的操作，
  * 在单机和集群环境有差异的操作留给子类去实现
+ *
  */
 public abstract class AbstractRedisOperation implements RedisOperation {
 
@@ -42,7 +49,18 @@ public abstract class AbstractRedisOperation implements RedisOperation {
         return exec(new RedisCallback<String>() {
             @Override
             public String doCallback(JedisCommands jedis) {
-                return jedis.set(key, value, nxxx, expx, time);
+                SetParams params = SetParams.setParams();
+                if ("nx".equalsIgnoreCase(nxxx)) {
+                    params = params.nx();
+                } else if ("xx".equalsIgnoreCase(nxxx)) {
+                    params = params.xx();
+                }
+                if ("ex".equalsIgnoreCase(expx)) {
+                    params = params.ex(time);
+                } else if ("px".equalsIgnoreCase(expx)) {
+                    params = params.px(time);
+                }
+                return jedis.set(key, value, params);
             }
         });
     }
@@ -427,9 +445,6 @@ public abstract class AbstractRedisOperation implements RedisOperation {
                 if (jedis instanceof Jedis) {
                     return ((Jedis) jedis).sinter(keys);
                 }
-                if (jedis instanceof ShardedJedis) {
-                    throw new UnsupportedOperationException("分库缓存不支持该方法");
-                }
                 return null;
             }
         });
@@ -556,122 +571,122 @@ public abstract class AbstractRedisOperation implements RedisOperation {
     }
 
     @Override
-    public Set<String> zrangeByIndex(final String key, final long start, final long end) {
-        return exec(new RedisCallback<Set<String>>() {
+    public List<String> zrangeByIndex(final String key, final long start, final long end) {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrange(key, start, end);
             }
         });
     }
 
     @Override
-    public Set<String> zrangeByScore(final String key, final double min, final double max) {
-        return exec(new RedisCallback<Set<String>>() {
+    public List<String> zrangeByScore(final String key, final double min, final double max) {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrangeByScore(key, min, max);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrangeByScoreWithScore(final String key, final double min, final double max) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrangeByScoreWithScore(final String key, final double min, final double max) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrangeByScoreWithScores(key, min, max);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrangeByScoreWithScore(final String key, final double min, final double max, final int offset, final int count) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrangeByScoreWithScore(final String key, final double min, final double max, final int offset, final int count) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrangeByScoreWithScores(key, min, max, offset, count);
             }
         });
     }
 
     @Override
-    public Set<String> zrevrangeByIndex(final String key, final long start, final long end) {
-        return exec(new RedisCallback<Set<String>>() {
+    public List<String> zrevrangeByIndex(final String key, final long start, final long end) {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrevrange(key, start, end);
             }
         });
     }
 
     @Override
-    public Set<String> zrevrangeByScore(final String key, final double max, final double min) {
-        return exec(new RedisCallback<Set<String>>() {
+    public List<String> zrevrangeByScore(final String key, final double max, final double min) {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrevrangeByScore(key, max, min);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrevrangeByScoreWithScore(final String key, final double min, final double max) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrevrangeByScoreWithScore(final String key, final double min, final double max) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrevrangeByScoreWithScores(key, min, max);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrevrangeByScoreWithScore(final String key, final double max, final double min, final int offset, final int count) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrevrangeByScoreWithScore(final String key, final double max, final double min, final int offset, final int count) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrevrangeByScoreWithScores(key, max, min, offset, count);
             }
         });
     }
 
     @Override
-    public Set<String> zrangeByScore(final String key, final double min, final double max, final int offset,
+    public List<String> zrangeByScore(final String key, final double min, final double max, final int offset,
                                      final int count) {
-        return exec(new RedisCallback<Set<String>>() {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrangeByScore(key, min, max, offset, count);
             }
         });
     }
 
     @Override
-    public Set<String> zrevrangeByScore(final String key, final double max, final double min,
+    public List<String> zrevrangeByScore(final String key, final double max, final double min,
                                         final int offset, final int count) {
-        return exec(new RedisCallback<Set<String>>() {
+        return exec(new RedisCallback<List<String>>() {
             @Override
-            public Set<String> doCallback(JedisCommands jedis) {
+            public List<String> doCallback(JedisCommands jedis) {
                 return jedis.zrevrangeByScore(key, max, min, offset, count);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrangeWithScores(final String key, final long start, final long end) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrangeWithScores(final String key, final long start, final long end) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrangeWithScores(key, start, end);
             }
         });
     }
 
     @Override
-    public Set<Tuple> zrevrangeWithScores(final String key, final long start, final long end) {
-        return exec(new RedisCallback<Set<Tuple>>() {
+    public List<Tuple> zrevrangeWithScores(final String key, final long start, final long end) {
+        return exec(new RedisCallback<List<Tuple>>() {
             @Override
-            public Set<Tuple> doCallback(JedisCommands jedis) {
+            public List<Tuple> doCallback(JedisCommands jedis) {
                 return jedis.zrevrangeWithScores(key, start, end);
             }
         });
@@ -684,9 +699,6 @@ public abstract class AbstractRedisOperation implements RedisOperation {
             public Long doCallback(JedisCommands jedis) {
                 if (jedis instanceof Jedis) {
                     return ((Jedis) jedis).zunionstore(dstkey, sets);
-                }
-                if (jedis instanceof ShardedJedis) {
-                    throw new UnsupportedOperationException("分库缓存不支持该方法");
                 }
                 return null;
             }
@@ -701,9 +713,6 @@ public abstract class AbstractRedisOperation implements RedisOperation {
                 if (jedis instanceof Jedis) {
                     return ((Jedis) jedis).zunionstore(dstkey, params, sets);
                 }
-                if (jedis instanceof ShardedJedis) {
-                    throw new UnsupportedOperationException("分库缓存不支持该方法");
-                }
                 return null;
             }
         });
@@ -717,9 +726,6 @@ public abstract class AbstractRedisOperation implements RedisOperation {
                 if (jedis instanceof Jedis) {
                     return ((Jedis) jedis).zinterstore(dstkey, sets);
                 }
-                if (jedis instanceof ShardedJedis) {
-                    throw new UnsupportedOperationException("分库缓存不支持该方法");
-                }
                 return null;
             }
         });
@@ -732,9 +738,6 @@ public abstract class AbstractRedisOperation implements RedisOperation {
             public Long doCallback(JedisCommands jedis) {
                 if (jedis instanceof Jedis) {
                     return ((Jedis) jedis).zinterstore(dstkey, params, sets);
-                }
-                if (jedis instanceof ShardedJedis) {
-                    throw new UnsupportedOperationException("分库缓存不支持该方法");
                 }
                 return null;
             }
@@ -767,6 +770,16 @@ public abstract class AbstractRedisOperation implements RedisOperation {
             @Override
             public Long doCallback(JedisCommands jedis) {
                 return jedis.pfadd(key, values);
+            }
+        });
+    }
+
+    @Override
+    public Long pfcount(String key) {
+        return exec(new RedisCallback<Long>() {
+            @Override
+            public Long doCallback(JedisCommands jedis) {
+                return jedis.pfcount(key);
             }
         });
     }

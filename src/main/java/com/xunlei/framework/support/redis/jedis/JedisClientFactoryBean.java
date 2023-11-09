@@ -1,13 +1,13 @@
 package com.xunlei.framework.support.redis.jedis;
 
 import com.xunlei.framework.common.util.NetUtils;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.net.URI;
 import java.util.List;
@@ -18,10 +18,8 @@ import static org.springframework.util.Assert.notNull;
  * Redis Client for standalone Server,
  * <p>
  * 所有来自GenericObjectPoolConfig都可以通过setter method来设置
- *
- * @see GenericObjectPoolConfig
  */
-public class JedisClientFactoryBean extends GenericObjectPoolConfig implements FactoryBean<JedisPool>, InitializingBean, DisposableBean {
+public class JedisClientFactoryBean extends JedisPoolConfig implements FactoryBean<JedisPool>, InitializingBean, DisposableBean {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

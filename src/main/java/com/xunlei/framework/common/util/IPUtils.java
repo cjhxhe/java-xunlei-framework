@@ -10,8 +10,6 @@ import java.util.Enumeration;
 /**
  * 该类来自于互联网，主要为了获取当前机器的IP地址，通常一台服务器可以有多个网卡，也可以有虚拟网卡，
  * 例如： WAN, LAN, VPN, multi-homed
- *
- * @see https://issues.apache.org/jira/browse/JCS-40
  */
 public class IPUtils {
 
@@ -113,7 +111,40 @@ public class IPUtils {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(getCurrentPid() + "," + getHostAddress());
+    /**
+     * 判断IP是否在某一个网段
+     *
+     * @param ip
+     * @param cidrs 多个网段以英文逗号隔开
+     * @return
+     */
+    public static boolean isInRange(String ip, String cidrs) {
+        if ("*".equals(cidrs) || "*.*.*.*".equals(cidrs)) {
+            return true;
+        }
+        String[] ips = ip.split("\\.");
+        int ipAddr = (Integer.parseInt(ips[0]) << 24) | (Integer.parseInt(ips[1]) << 16) | (Integer.parseInt(ips[2]) << 8) | Integer.parseInt(ips[3]);
+        String[] values = StringUtils.split(cidrs, ",");
+        for (String cidr : values) {
+            int type = Integer.parseInt(cidr.replaceAll(".*/", ""));
+            int mask = 0xFFFFFFFF << (32 - type);
+            String cidrIp = cidr.replaceAll("/.*", "");
+            String[] cidrIps = cidrIp.split("\\.");
+            int cidrIpAddr = (Integer.parseInt(cidrIps[0]) << 24) | (Integer.parseInt(cidrIps[1]) << 16) | (Integer.parseInt(cidrIps[2]) << 8) | Integer.parseInt(cidrIps[3]);
+            if ((ipAddr & mask) == (cidrIpAddr & mask)) {
+                return true;
+            }
+        }
+        return false;
     }
+
+    public static void main(String[] args) {
+//		System.out.println(getCurrentPid() + "," + getHostAddress());
+        System.out.println(isInRange("192.168.12.2", "192.168.1.64/26,192.168.0.0/23"));
+        System.out.println(isInRange("192.168.1.2", "192.168.0.0/23"));
+        System.out.println(isInRange("192.168.0.1", "192.168.0.0/24"));
+        System.out.println(isInRange("192.168.0.0", "192.168.0.0/32"));
+    }
+
+
 }

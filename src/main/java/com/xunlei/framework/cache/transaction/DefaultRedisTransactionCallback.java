@@ -2,7 +2,6 @@ package com.xunlei.framework.cache.transaction;
 
 import com.xunlei.framework.support.redis.PiplineCallbackAdapter;
 import com.xunlei.framework.support.redis.TransactionCallback;
-import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.Transaction;
 
 import java.util.Collection;
@@ -50,37 +49,4 @@ public class DefaultRedisTransactionCallback extends PiplineCallbackAdapter impl
             }
         }
     }
-
-    @Override
-    public void doCallback(ShardedJedisPipeline p) {
-        for (Command cmd : redisCommands) {
-            switch (cmd.getOp()) {
-                case SET:
-                    p.set(cmd.getCacheKey(), cmd.getCacheValue());
-                    break;
-                case MOD:
-                    p.set(cmd.getCacheKey(), cmd.getCacheValue());
-                    break;
-                case EXPIRE:
-                    p.expire(cmd.getCacheKey(), Integer.parseInt(cmd.getCacheValue()));
-                case DEL:
-                    p.del(cmd.getCacheKey());
-                    break;
-                case ADD_MEMBERS:
-                    p.sadd(cmd.getCacheGroupKey(), cmd.getGroupValues());
-                    break;
-                case DEL_MEMBERS:
-                    p.srem(cmd.getCacheGroupKey(), cmd.getGroupValues());
-                    break;
-                case SETS:
-                    String[] keyvalues = cmd.getKeyvalues();
-                    for (int i = 0; i < keyvalues.length; i += 2) {
-                        p.set(keyvalues[i], keyvalues[i + 1]);
-                    }
-                default:
-                    break;
-            }
-        }
-    }
-
 }

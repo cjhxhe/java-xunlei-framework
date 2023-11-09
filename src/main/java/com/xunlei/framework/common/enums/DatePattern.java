@@ -63,8 +63,6 @@ public enum DatePattern {
 
     MD5("MM/dd"),
 
-    MD6("MM-dd"),
-
     MD_HMS("MM月dd日 HH:mm:ss"),
 
     MD_HMS2("MM.dd HH:mm:ss"),
@@ -89,11 +87,7 @@ public enum DatePattern {
 
     MD_H1("MM月dd日 HH时"),
 
-    DD("dd"),
-
-    D_H_M("dd日HH时mm分"),
-
-    yyyyMMddHHmm("yyyyMMddHHmm"),
+    DD("dd"), yyyyMMddHHmm("yyyyMMddHHmm"),
 
     HMS("HH:mm:ss"),
 
@@ -108,5 +102,4 @@ public enum DatePattern {
     public DateTimeFormatter getFormat() {
         return this.format;
     }
-
 }

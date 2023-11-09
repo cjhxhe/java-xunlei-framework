@@ -15,9 +15,9 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    private static final long ONE_MINUTE = 60;
-    private static final long ONE_HOUR = 60 * ONE_MINUTE;
-    private static final long ONE_DAY = 24 * ONE_HOUR;
+    private static final int ONE_MINUTE = 60;
+    private static final int ONE_HOUR = 60 * ONE_MINUTE;
+    private static final int ONE_DAY = 24 * ONE_HOUR;
 
     /**
      * 按默认格式将字符串转化成Date对象
@@ -346,6 +346,17 @@ public class DateUtils {
     }
 
     /**
+     * 获取两个日期毫秒数相差秒数
+     *
+     * @param earlyTime
+     * @param latelyTime
+     * @return
+     */
+    public static Long getDiffSeconds(Long earlyTime, Long latelyTime) {
+        return new Duration(earlyTime, latelyTime).getStandardSeconds();
+    }
+
+    /**
      * 获取两个日期相差分钟，当前时间减去给定的时间
      *
      * @param date 指定日期
@@ -460,27 +471,6 @@ public class DateUtils {
             timeDifference = (dValue / ONE_DAY) + "天前";
         }
         return timeDifference;
-    }
-
-    /**
-     * 获取背包过期时间显示
-     * 超过1天显示：X天X时X分，大于等于100天，显示99天23小时59分
-     * 小于1天显示：X时X分X秒
-     */
-    public static String getExpireString(Date expireTime) {
-        if (expireTime == null) {
-            return "0时0分0秒";
-        }
-        long dValue = DateUtils.getDiffSeconds(new Date(), expireTime);
-        if (dValue < 0) {
-            return "0时0分0秒";
-        } else if (dValue < ONE_DAY) {
-            return dValue / ONE_HOUR + "时" + dValue / ONE_MINUTE % 60 + "分" + dValue % 60 + "秒";
-        } else if (dValue >= 100 * ONE_DAY) {
-            return "99天23时59分";
-        } else {
-            return dValue / ONE_DAY + "天" + dValue / ONE_HOUR % 24 + "时" + dValue / ONE_MINUTE % 60 + "分";
-        }
     }
 
     /**
@@ -868,7 +858,8 @@ public class DateUtils {
      */
     public static Date getEndOfDay(Date date, boolean isSameDay) {
         if (isSameDay) {
-            return new DateTime(date).withTime(23, 59, 59, 999).toDate();
+            // 毫秒不能使用999，mysql入库时会自动四舍五入变成第二天0点
+            return new DateTime(date).withTime(23, 59, 59, 0).toDate();
         }
         return new DateTime(date).plusDays(1).withTimeAtStartOfDay().toDate();
     }
@@ -896,7 +887,8 @@ public class DateUtils {
      */
     public static Date getEndOfWeek(Date date, boolean isSameDay) {
         if (isSameDay) {
-            return new DateTime(date).dayOfWeek().withMaximumValue().withTime(23, 59, 59, 999).toDate();
+            // 毫秒不能使用999，mysql入库时会自动四舍五入变成第二天0点
+            return new DateTime(date).dayOfWeek().withMaximumValue().withTime(23, 59, 59, 0).toDate();
         }
         return DateUtils.getEndOfWeek(date);
     }
@@ -924,7 +916,8 @@ public class DateUtils {
      */
     public static Date getEndOfMonth(Date date, boolean isSameDay) {
         if (isSameDay) {
-            return new DateTime(date).dayOfMonth().withMaximumValue().withTime(23, 59, 59, 999).toDate();
+            // 毫秒不能使用999，mysql入库时会自动四舍五入变成第二天0点
+            return new DateTime(date).dayOfMonth().withMaximumValue().withTime(23, 59, 59, 0).toDate();
         }
         return DateUtils.getEndOfMonth(date);
     }
@@ -1126,6 +1119,86 @@ public class DateUtils {
     }
 
     /**
+     * 将秒数转成xx:xx的时间格式
+     *
+     * @param second
+     * @return
+     */
+    public static String secondToTimeStr5(Integer second) {
+        if (second == null || second <= 0) {
+            return null;
+        }
+        int minutes = second / 60;
+        int seconds = second % 60;
+        StringBuffer sb = new StringBuffer();
+        if (minutes < 10) {
+            sb.append("0");
+        }
+        sb.append(minutes).append(":");
+        if (seconds < 10) {
+            sb.append("0");
+        }
+        sb.append(seconds);
+        return sb.toString();
+    }
+
+    /**
+     * 将秒转成剩余时间
+     *
+     * @param second
+     * @return
+     */
+    public static String secondsToTimeStr3(Integer second) {
+        if (second <= ONE_MINUTE) {
+            return "1分钟";
+        }
+        int days = second / ONE_DAY;
+        int hours = (second % ONE_DAY) / ONE_HOUR;
+        int minutes = (second % ONE_HOUR) / ONE_MINUTE;
+        StringBuffer sb = new StringBuffer();
+        if (days > 0) {
+            sb.append(days + "天");
+        }
+        if (hours > 0) {
+            sb.append(hours + "小时");
+        }
+        if (minutes > 0) {
+            sb.append(minutes + "分钟");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 将秒转成剩余时间
+     *
+     * @param second
+     * @return
+     */
+    public static String secondsToTimeStr4(Integer second) {
+        if (second <= ONE_MINUTE) {
+            return "1分钟";
+        }
+        int days = second / ONE_DAY;
+        int hours = (second % ONE_DAY) / ONE_HOUR;
+        int minutes = (second % ONE_HOUR) / ONE_MINUTE;
+        StringBuffer sb = new StringBuffer();
+        if (days > 0) {
+            sb.append(days + "天");
+        }
+        if (hours > 0) {
+            sb.append(hours + "小时");
+        }
+        // 如果还有小时则不显示分
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        if (minutes > 0) {
+            sb.append(minutes + "分钟");
+        }
+        return sb.toString();
+    }
+
+    /**
      * 解析日期范围(开始时间和结束时间)
      *
      * @param dateTimeRange
@@ -1154,7 +1227,7 @@ public class DateUtils {
         if (dateTimeRange == null) {
             return null;
         }
-        return parseRangeDate(StringUtils.split(dateTimeRange, ","));
+        return DateUtils.parseRangeDate(StringUtils.split(dateTimeRange, ","));
     }
 
     public static boolean isSameDay(Date date1, Date date2) {
@@ -1165,9 +1238,7 @@ public class DateUtils {
         cal1.setTime(date1);
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(date2);
-        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
+        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
 
     public static boolean isSameDay(Date date) {
@@ -1191,9 +1262,7 @@ public class DateUtils {
         Calendar cal2 = Calendar.getInstance();
         cal2.setFirstDayOfWeek(Calendar.MONDAY);
         cal2.setTime(date2);
-        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR));
+        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR));
     }
 
     /**
@@ -1329,8 +1398,10 @@ public class DateUtils {
       /*  Date date = DateUtils.plusDays(new Date(), -3);
         System.out.println(date);
         System.out.println(DateUtils.isSameWeek(new Date(), date));*/
+//        Long seconds = getDiffSeconds("2022-03-03 13:00:00", "2022-03-03 13:00:00");
+//        System.out.println(secondsToTimeStr3(seconds.intValue()));
+        System.out.println(DateUtils.parse("1989-04-16", DatePattern.YMD));
 
-        System.out.println(DateUtils.parse("1941-03-16", DatePattern.YMD));
-
+//        System.out.println(getDiffMonth(DateUtils.parse("2020-11-01 13:00:00"), DateUtils.parse("2022-11-11 13:00:00")));
     }
 }

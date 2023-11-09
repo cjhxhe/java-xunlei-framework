@@ -1,14 +1,9 @@
-/*
- * Copyright © 2014 YAOCHEN Corporation, All Rights Reserved
- */
 package com.xunlei.framework.common.util;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
 
 public class MapUtils {
 
@@ -27,8 +22,7 @@ public class MapUtils {
      * @return
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static Map<String, Object> overrideExcludeNull(
-            Map<String, Object> source, Map<String, Object> mod) {
+    public static Map<String, Object> overrideExcludeNull(Map<String, Object> source, Map<String, Object> mod) {
         if (source == null || mod == null) {
             return null;
         }
@@ -61,8 +55,7 @@ public class MapUtils {
         if (map == null) {
             return;
         }
-        for (Iterator<Entry<K, V>> ite = map.entrySet().iterator(); ite
-                .hasNext(); ) {
+        for (Iterator<Entry<K, V>> ite = map.entrySet().iterator(); ite.hasNext(); ) {
             if (ite.next().getValue() == null) {
                 ite.remove();
             }
@@ -102,37 +95,5 @@ public class MapUtils {
         }
         return value.toString();
 
-    }
-
-    /**
-     * 对象转Map，包含自己类对象和父类对象
-     *
-     * @param obj 要转的对象
-     */
-    public static Map<String, String> toMap(Object obj) {
-        Map<String, String> map = new HashMap<>();
-        if (obj == null) {
-            return map;
-        }
-        Class<?> clazz = obj.getClass();
-        while (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                try {
-                    // 字段值为空，跳过
-                    Object valueObj = field.get(obj);
-                    if (valueObj == null) {
-                        continue;
-                    }
-                    map.put(field.getName(), valueObj.toString());
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            // 递归查询上层
-            clazz = clazz.getSuperclass();
-        }
-        return map;
     }
 }

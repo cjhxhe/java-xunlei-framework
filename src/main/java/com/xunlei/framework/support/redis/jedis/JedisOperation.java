@@ -5,10 +5,9 @@ import com.xunlei.framework.support.redis.PiplineCallback;
 import com.xunlei.framework.support.redis.RedisCallback;
 import com.xunlei.framework.support.redis.TransactionCallback;
 import redis.clients.jedis.*;
+import redis.clients.jedis.commands.JedisCommands;
 
 import java.util.List;
-import java.util.Set;
-
 
 public class JedisOperation extends AbstractRedisOperation {
 
@@ -174,16 +173,6 @@ public class JedisOperation extends AbstractRedisOperation {
             @Override
             public Long doCallback(Jedis jedis) {
                 return jedis.publish(channel, message);
-            }
-        });
-    }
-
-    @Override
-    public Set<String> sdiff(String... keys) {
-        return exec0(new JedisCallback<Set<String>>() {
-            @Override
-            public Set<String> doCallback(Jedis jedis) {
-                return jedis.sdiff(keys);
             }
         });
     }

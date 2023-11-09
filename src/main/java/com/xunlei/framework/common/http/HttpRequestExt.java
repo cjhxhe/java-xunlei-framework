@@ -30,10 +30,6 @@ public class HttpRequestExt {
         this.headers = headers;
     }
 
-    public HttpRequestExt(HttpMediaType mediaType) {
-        this.mediaType = mediaType;
-    }
-
     public HttpMediaType getMediaType() {
         return mediaType;
     }

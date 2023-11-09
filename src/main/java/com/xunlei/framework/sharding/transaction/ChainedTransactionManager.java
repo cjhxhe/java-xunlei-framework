@@ -18,8 +18,7 @@ public class ChainedTransactionManager implements PlatformTransactionManager {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public TransactionStatus getTransaction(TransactionDefinition definition)
-            throws TransactionException {
+    public TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException {
         if (logger.isDebugEnabled()) {
             logger.debug("Open a one-pc transaction.");
         }
@@ -31,14 +30,11 @@ public class ChainedTransactionManager implements PlatformTransactionManager {
     /**
      * Create a rae TransactionStatus instance for the given arguments.
      */
-    protected DefaultTransactionStatus newTransactionStatus(
-            TransactionDefinition definition, Object transaction) {
+    protected DefaultTransactionStatus newTransactionStatus(TransactionDefinition definition, Object transaction) {
         // Cache debug flag to avoid repeated checks.
         boolean debugEnabled = logger.isDebugEnabled();
 
-        return new DefaultTransactionStatus(
-                transaction, true, true,
-                definition.isReadOnly(), debugEnabled, null);
+        return new DefaultTransactionStatus(transaction, true, true, definition.isReadOnly(), debugEnabled, null);
     }
 
     @Override
@@ -81,22 +77,19 @@ public class ChainedTransactionManager implements PlatformTransactionManager {
 
             if (commitException != null) {
                 boolean firstTransactionManagerFailed = (commitExceptionConnection == getLastConnectionHolder(connSet));
-                int transactionState = firstTransactionManagerFailed ? HeuristicCompletionException.STATE_ROLLED_BACK
-                        : HeuristicCompletionException.STATE_MIXED;
-                throw new HeuristicCompletionException(transactionState,
-                        commitException);
+                int transactionState = firstTransactionManagerFailed ? HeuristicCompletionException.STATE_ROLLED_BACK : HeuristicCompletionException.STATE_MIXED;
+                throw new HeuristicCompletionException(transactionState, commitException);
             }
         } finally {
-            RoutingSynchronizationManager
-                    .invokeAfterCompletion(TransactionSynchronization.STATUS_COMMITTED);
+            RoutingSynchronizationManager.invokeAfterCompletion(TransactionSynchronization.STATUS_COMMITTED);
             RoutingSynchronizationManager.clearSynchronization();
         }
     }
 
     @Override
     public void rollback(TransactionStatus status) throws TransactionException {
-        if (logger.isWarnEnabled()) {
-            logger.warn("Rollback all connected transactions.");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Rollback all connected transactions.");
         }
         try {
             TransactionSynchronizationUtils.triggerBeforeCompletion();
@@ -121,12 +114,11 @@ public class ChainedTransactionManager implements PlatformTransactionManager {
             }
 
             if (rollbackException != null) {
-                throw new UnexpectedRollbackException("Rollback exception, originated at (" + rollbackExceptionConnection + ") " +
-                        rollbackException.getMessage(), rollbackException);
+                throw new UnexpectedRollbackException("Rollback exception, originated at (" + rollbackExceptionConnection + ") " + rollbackException.getMessage(),
+                        rollbackException);
             }
         } finally {
-            RoutingSynchronizationManager
-                    .invokeAfterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
+            RoutingSynchronizationManager.invokeAfterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
             RoutingSynchronizationManager.clearSynchronization();
         }
     }

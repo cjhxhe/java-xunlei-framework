@@ -7,10 +7,6 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
-/**
- * @Auther: mq
- * @Date: 2019/5/22 15:14
- */
 public class PinYinUtils {
     private static HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
 
@@ -69,41 +65,6 @@ public class PinYinUtils {
     }
 
     /**
-     * 汉字转化为驼峰 eg: 就聊 -> JiuLiao
-     *
-     * @param src
-     * @return
-     */
-    public static String toHumpPinyin(String src) {
-        char[] charArray = src.toCharArray();
-        // 单个字的多个音组成的数组
-        String[] multiPinYinArray;
-        HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
-        format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
-        format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        format.setVCharType(HanyuPinyinVCharType.WITH_V);
-        StringBuilder result = new StringBuilder();
-        try {
-            for (char c : charArray) {
-                //判断是否为汉字字符
-                if (Character.toString(c).matches("[\\u4E00-\\u9FA5]+")) {
-                    multiPinYinArray =
-                            PinyinHelper.toHanyuPinyinStringArray(c, format);
-                    String word = multiPinYinArray[0];
-                    result.append(word.substring(0, 1).toUpperCase())
-                            .append(word.substring(1));
-                } else {
-                    result.append(c);
-                }
-            }
-            return result.toString();
-        } catch (BadHanyuPinyinOutputFormatCombination e1) {
-            e1.printStackTrace();
-        }
-        return result.toString();
-    }
-
-    /**
      * 将字符中的小写英文字母转为大写
      *
      * @param ch 字符
@@ -117,7 +78,7 @@ public class PinYinUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(toHumpPinyin("就聊聊"));
+        System.out.println(toPinyin("원정", PinyinType.HEAD));
     }
 
     public enum PinyinType {

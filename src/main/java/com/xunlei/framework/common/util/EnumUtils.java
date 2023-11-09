@@ -1,7 +1,3 @@
-/*!
- * Copyright 2018, Julun, Inc.
- */
-
 package com.xunlei.framework.common.util;
 
 import java.util.ArrayList;
@@ -127,23 +123,6 @@ public class EnumUtils {
         }
         return StringUtils.join(ids, ",");
 
-    }
-
-    /**
-     * 将枚举id字符串转成desc字符串
-     */
-    public static <T extends IDEnum> String toDesc(String idsStr, Class<T> clazz) {
-        if (StringUtils.isEmpty(idsStr)) {
-            return null;
-        }
-        String[] idArray = StringUtils.split(idsStr, ",");
-        for (int i = 0; i < idArray.length; i++) {
-            T t = EnumUtils.byId(idArray[i], clazz);
-            if (t != null) {
-                idArray[i] = t.getDesc();
-            }
-        }
-        return StringUtils.join(idArray, ",");
     }
 
     /**

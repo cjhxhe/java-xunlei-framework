@@ -1,6 +1,3 @@
-/*
- * Copyright © 2014 YAOCHEN Corporation, All Rights Reserved
- */
 package com.xunlei.framework.cache.impl;
 
 import com.xunlei.framework.cache.KeyBuilder;
@@ -11,6 +8,7 @@ import java.text.MessageFormat;
 
 /**
  * 在不指定缓存KEY生成器的情况下，默认会使用该类的实例生成缓存的KEY
+ *
  */
 public class DefaultKeyBuilder implements KeyBuilder {
 

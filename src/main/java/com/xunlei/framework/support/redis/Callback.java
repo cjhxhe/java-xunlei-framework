@@ -8,16 +8,16 @@ package com.xunlei.framework.support.redis;
  * @param P 回调的参数泛型定义
  * @param V 返回值
  */
-public interface Callback<P, V> {
+public interface Callback<P,V> {
 
-
-    /**
-     * 该回调函数可能返回值,但返回值无法确定,
-     * 因此这里使用了泛型由调用者确定具体返回值的类型
-     *
-     * @param param
-     * @return
-     */
-    V doCallback(P param);
-
+	
+	/**
+	 * 该回调函数可能返回值,但返回值无法确定,
+	 * 因此这里使用了泛型由调用者确定具体返回值的类型
+	 * 
+	 * @param param
+	 * @return
+	 */
+	 V doCallback(P param);
+	
 }

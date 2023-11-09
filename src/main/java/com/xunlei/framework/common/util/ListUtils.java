@@ -1,6 +1,3 @@
-/*
- * Copyright © 2014 YAOCHEN Corporation, All Rights Reserved
- */
 package com.xunlei.framework.common.util;
 
 import com.xunlei.framework.common.dto.ElementDTO;
@@ -168,7 +165,7 @@ public class ListUtils extends org.apache.commons.collections.ListUtils {
      */
     public static <T> List<List<T>> subLists(List<T> src, int pageLimit) {
         if (ListUtils.isEmpty(src)) {
-            return Collections.emptyList();
+            return null;
         }
 
         List<List<T>> targets = new ArrayList<>();

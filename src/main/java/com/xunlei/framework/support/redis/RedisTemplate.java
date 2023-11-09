@@ -9,7 +9,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import redis.clients.jedis.*;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.params.ZParams;
+import redis.clients.jedis.resps.ScanResult;
+import redis.clients.jedis.resps.Tuple;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -317,64 +322,62 @@ public abstract class RedisTemplate implements InitializingBean, RedisOperation,
     }
 
     @Override
-    public Set<String> zrangeByIndex(String key, long start, long end) {
+    public List<String> zrangeByIndex(String key, long start, long end) {
         return redisOperation.zrangeByIndex(key, start, end);
     }
 
     @Override
-    public Set<String> zrangeByScore(String key, double min, double max) {
+    public List<String> zrangeByScore(String key, double min, double max) {
         return redisOperation.zrangeByScore(key, min, max);
     }
 
     @Override
-    public Set<String> zrevrangeByIndex(String key, long start, long end) {
+    public List<String> zrevrangeByIndex(String key, long start, long end) {
         return redisOperation.zrevrangeByIndex(key, start, end);
     }
 
     @Override
-    public Set<String> zrevrangeByScore(String key, double max, double min) {
+    public List<String> zrevrangeByScore(String key, double max, double min) {
         return redisOperation.zrevrangeByScore(key, max, min);
     }
 
     @Override
-    public Set<String> zrangeByScore(String key, double min, double max,
-                                     int offset, int count) {
+    public List<String> zrangeByScore(String key, double min, double max, int offset, int count) {
         return redisOperation.zrangeByScore(key, min, max, offset, count);
     }
 
     @Override
-    public Set<String> zrevrangeByScore(String key, double max, double min,
-                                        int offset, int count) {
+    public List<String> zrevrangeByScore(String key, double max, double min, int offset, int count) {
         return redisOperation.zrevrangeByScore(key, max, min, offset, count);
     }
 
     @Override
-    public Set<Tuple> zrangeWithScores(String key, long start, long end) {
+    public List<Tuple> zrangeWithScores(String key, long start, long end) {
         return redisOperation.zrangeWithScores(key, start, end);
     }
 
     @Override
-    public Set<Tuple> zrangeByScoreWithScore(String key, double min, double max) {
+    public List<Tuple> zrangeByScoreWithScore(String key, double min, double max) {
         return redisOperation.zrangeByScoreWithScore(key, min, max);
     }
 
     @Override
-    public Set<Tuple> zrangeByScoreWithScore(String key, double min, double max, int offset, int count) {
+    public List<Tuple> zrangeByScoreWithScore(String key, double min, double max, int offset, int count) {
         return redisOperation.zrangeByScoreWithScore(key, min, max, offset, count);
     }
 
     @Override
-    public Set<Tuple> zrevrangeWithScores(String key, long start, long end) {
+    public List<Tuple> zrevrangeWithScores(String key, long start, long end) {
         return redisOperation.zrevrangeWithScores(key, start, end);
     }
 
     @Override
-    public Set<Tuple> zrevrangeByScoreWithScore(String key, double min, double max) {
+    public List<Tuple> zrevrangeByScoreWithScore(String key, double min, double max) {
         return redisOperation.zrevrangeByScoreWithScore(key, min, max);
     }
 
     @Override
-    public Set<Tuple> zrevrangeByScoreWithScore(String key, double max, double min, int offset, int count) {
+    public List<Tuple> zrevrangeByScoreWithScore(String key, double max, double min, int offset, int count) {
         return redisOperation.zrevrangeByScoreWithScore(key, max, min, offset, count);
     }
 
@@ -439,8 +442,7 @@ public abstract class RedisTemplate implements InitializingBean, RedisOperation,
     }
 
     @Override
-    public String set(String key, String value, String nxxx, String expx,
-                      long time) {
+    public String set(String key, String value, String nxxx, String expx, long time) {
         return redisOperation.set(key, value, nxxx, expx, time);
     }
 
@@ -495,13 +497,12 @@ public abstract class RedisTemplate implements InitializingBean, RedisOperation,
     }
 
     @Override
-    public Long publish(String channel, String message) {
-        return redisOperation.publish(channel, message);
+    public Long pfcount(String key) {
+        return redisOperation.pfadd(key);
     }
 
-
     @Override
-    public Set<String> sdiff(String... keys) {
-        return redisOperation.sdiff(keys);
+    public Long publish(String channel, String message) {
+        return redisOperation.publish(channel, message);
     }
 }

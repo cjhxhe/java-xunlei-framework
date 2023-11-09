@@ -3,14 +3,14 @@
  */
 package com.xunlei.framework.common.util;
 
-import org.apache.commons.io.IOUtils;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
 
 /**
  * ZLib压缩工具类
@@ -132,18 +132,6 @@ public abstract class ZLibUtils {
             }
         }
         return o.toByteArray();
-    }
-
-    public static void main(String[] args) throws Throwable {
-        File file = new File("/Users/killer/Downloads/index.txt");
-        FileInputStream fis = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(fis, file.length());
-        byte[] after = ZLibUtils.compress(bytes);
-        fis.close();
-        byte[] newBytes = ZLibUtils.decompress(bytes);
-        System.out.println("压缩前：" + bytes.length);
-        System.out.println("压缩后：" + after.length);
-        System.out.println("还原后：" + newBytes.length);
     }
 
 }
