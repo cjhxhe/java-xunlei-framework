@@ -16,7 +16,7 @@ public class BufferedCacheRemoteSender implements RemoteSenderMorly<Command> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final String PROVIDER = "EASYOOO_CACHE";
+    private static final String PROVIDER = "XL_CACHE";
 
     /**
      * 依赖外部注入
