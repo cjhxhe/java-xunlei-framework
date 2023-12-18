@@ -33,7 +33,7 @@ public @interface XLLength {
 
     String minMessage() default "{label}长度至少需要{min}字符";
 
-    String maxMessage() default "{label}长度不能超过{vmax}字符";
+    String maxMessage() default "{label}长度不能超过{max}字符";
 
     String minMaxMessage() default "{label}长度需在{min}至{max}字符之间";
 

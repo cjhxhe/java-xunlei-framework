@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xunlei</groupId>
     <artifactId>java-xunlei-framework</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2-SNAPSHOT</version>
     <name>java-xunlei-framewor</name>
 
     <properties>
@@ -203,6 +203,17 @@
             <version>2.5.0</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2436433-release-35jgrb/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2436433-snapshot-omLEbz/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
