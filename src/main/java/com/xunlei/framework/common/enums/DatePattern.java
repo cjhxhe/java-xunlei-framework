@@ -27,6 +27,8 @@ public enum DatePattern {
 
     YMD9("MM/dd/yyyy"),
 
+    YMD10("dd/MM/yyyy"),
+
     YM("yyyy-MM"),
 
     YM2("yyyyMM"),
