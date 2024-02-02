@@ -32,6 +32,22 @@ public class HttpUtils {
         return null;
     }
 
+    public static String get(String url, Map<String, String> headers) throws IOException {
+        HttpGet httpGet = new HttpGet(url);
+        // 设置请求头
+        if (headers != null) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                httpGet.setHeader(header.getKey(), header.getValue());
+            }
+        }
+        HttpResponse response = HttpClients.createDefault().execute(httpGet);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            return EntityUtils.toString(entity);
+        }
+        return null;
+    }
+
     public static String post(String url, Map<String, String> params) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         List<NameValuePair> nvps = new ArrayList<>();

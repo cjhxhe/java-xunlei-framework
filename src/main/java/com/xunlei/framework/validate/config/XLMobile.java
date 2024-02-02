@@ -19,8 +19,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface XLMobile {
 
-    String lengthMessage() default "手机号码长度固定为11位数字";
+    String lengthMessage() default "mobile length is incorrect";
 
-    String patternMessage() default "手机号码格式错误";
+    String patternMessage() default "mobile pattern is incorrect";
 
 }

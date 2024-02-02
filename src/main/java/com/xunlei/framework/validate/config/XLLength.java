@@ -31,11 +31,11 @@ public @interface XLLength {
 
     String label() default "";
 
-    String minMessage() default "{label}长度至少需要{min}字符";
+    String minMessage() default "{label} at least {min} char(s)";
 
-    String maxMessage() default "{label}长度不能超过{max}字符";
+    String maxMessage() default "{label} at most {max} char(s)";
 
-    String minMaxMessage() default "{label}长度需在{min}至{max}字符之间";
+    String minMaxMessage() default "{label} should be {min} ~ {max} char(s)";
 
-    String eqMessage() default "{label}长度必须为{min}字符";
+    String eqMessage() default "{label} should be {min} char(s)";
 }

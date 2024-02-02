@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface XLNotNull {
 
-    String message() default "{label}不允许为空";
+    String message() default "{label} should not be null";
 
     /**
      * 该配置会替换验证不合法消息的变量

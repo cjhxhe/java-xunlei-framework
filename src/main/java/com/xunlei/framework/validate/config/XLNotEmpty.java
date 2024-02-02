@@ -30,14 +30,14 @@ public @interface XLNotEmpty {
      *
      * @return
      */
-    String stringMessage() default "{label}不允许为空";
+    String stringMessage() default "{label} cannot be empty";
 
     /**
      * 当作为集合的时候错误提示文本
      *
      * @return
      */
-    String collectionMessage() default "{label}至少需要包含一项";
+    String collectionMessage() default "{label} must contain at least one item";
 
     /**
      * 该配置会替换验证不合法消息的变量

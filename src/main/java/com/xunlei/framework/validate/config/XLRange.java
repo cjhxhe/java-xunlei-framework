@@ -25,9 +25,9 @@ public @interface XLRange {
 
     String label() default "";
 
-    String minMessage() default "{label}的值不能小于{min}";
+    String minMessage() default "{label} cannot be less than {min}";
 
-    String maxMessage() default "{label}的值不能大于{max}";
+    String maxMessage() default "{label} cannot be greater than {max}";
 
-    String eqMessage() default "{label}的值必须为{min}";
+    String eqMessage() default "{label} should be {min}";
 }

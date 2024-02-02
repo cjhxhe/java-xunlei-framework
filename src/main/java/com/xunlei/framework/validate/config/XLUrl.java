@@ -17,9 +17,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface XLUrl {
 
-    String emptyMessage() default "{label}不能为空";
+    String emptyMessage() default "{label} cannot be empty";
 
-    String patternMessage() default "{label}不是一个合法的网址";
+    String patternMessage() default "{label} is not a valid pattern";
 
     String label() default "";
 
