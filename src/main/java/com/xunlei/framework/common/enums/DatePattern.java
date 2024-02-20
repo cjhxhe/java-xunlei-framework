@@ -49,6 +49,8 @@ public enum DatePattern {
 
     YMD_HMS3("yyyy/MM/dd HH:mm:ss"),
 
+    YMD_HMS4("dd/MM/yyyy HH:mm:ss"),
+
     YMD_HMSS("yyyy-MM-dd HH:mm:ss.SSS"),
 
     YMD_HMSS2("yyyyMMddHHmmssSSS"),
