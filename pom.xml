@@ -207,11 +207,11 @@
     <distributionManagement>
         <repository>
             <id>rdc-releases</id>
-            <url>https://packages.aliyun.com/maven/repository/2448001-release-zBfVJO/</url>
+            <url>https://packages.aliyun.com/maven/repository/2459709-release-UCI7jf/</url>
         </repository>
         <snapshotRepository>
             <id>rdc-snapshots</id>
-            <url>https://packages.aliyun.com/maven/repository/2448001-snapshot-p3TtIQ/</url>
+            <url>https://packages.aliyun.com/maven/repository/2459709-snapshot-FlkNOw/</url>
         </snapshotRepository>
     </distributionManagement>
 
